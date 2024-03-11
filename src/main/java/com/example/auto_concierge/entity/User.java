@@ -30,6 +30,9 @@ public class User {
     private Role role;
 
     @OneToMany(mappedBy = "user")
+    private Set<ServiceCenter> serviceCenters = new HashSet<>();
+
+    @OneToMany(mappedBy = "user")
     private Set<ServiceRecord> serviceRecords = new HashSet<>();
 
     @OneToMany(mappedBy = "user")

@@ -25,8 +25,11 @@ public class ServiceCenter {
 
     private String workingHours;
 
+    @ManyToOne
+    private User user;
+
     @OneToMany(mappedBy = "serviceCenter")
     private List<ServiceRecord> serviceRecords;
 
-    // Геттеры и сеттеры
+
 }
