@@ -38,7 +38,6 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<PartsOrder> partsOrders = new HashSet<>();
 
-    // Геттеры и сеттеры
 
     public void addServiceRecord(ServiceRecord serviceRecord) {
         serviceRecords.add(serviceRecord);
