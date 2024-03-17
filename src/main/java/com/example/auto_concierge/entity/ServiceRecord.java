@@ -18,9 +18,6 @@ public class ServiceRecord {
     private Long id;
 
     @ManyToOne
-    private User user;
-
-    @ManyToOne
     private Car car;
 
     @ManyToOne

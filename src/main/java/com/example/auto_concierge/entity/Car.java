@@ -1,9 +1,14 @@
 package com.example.auto_concierge.entity;
 
+
+
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Past;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @Entity
 @Table (name = "cars")
@@ -22,9 +27,10 @@ public class Car {
 
     private String brand;
     private String model;
-    private Integer year;
+    @Past
+    private LocalDate year;
     private String licensePlate;
-    private Double mileage;
+    private Integer mileage;
     private String vin;
     private String engineType;
 

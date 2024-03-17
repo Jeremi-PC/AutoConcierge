@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -23,8 +24,11 @@ public class User {
 
     private String firstName;
     private String lastName;
-    private String email;
+    private String username;
     private String password;
+    private String email;
+    @ElementCollection
+    private List<Phone> phoneNumber;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -33,21 +37,7 @@ public class User {
     private Set<ServiceCenter> serviceCenters = new HashSet<>();
 
     @OneToMany(mappedBy = "user")
-    private Set<ServiceRecord> serviceRecords = new HashSet<>();
-
-    @OneToMany(mappedBy = "user")
     private Set<PartsOrder> partsOrders = new HashSet<>();
-
-
-    public void addServiceRecord(ServiceRecord serviceRecord) {
-        serviceRecords.add(serviceRecord);
-        serviceRecord.setUser(this);
-    }
-
-    public void removeServiceRecord(ServiceRecord serviceRecord) {
-        serviceRecords.remove(serviceRecord);
-        serviceRecord.setUser(null);
-    }
 
     public void addPartsOrder(PartsOrder partsOrder) {
         partsOrders.add(partsOrder);

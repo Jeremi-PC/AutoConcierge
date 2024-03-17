@@ -1,5 +1,6 @@
 package com.example.auto_concierge.entity;
 
+import com.github.javafaker.PhoneNumber;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,10 +21,12 @@ public class ServiceCenter {
     private String name;
 
     private String address;
-
-    private String contactNumber;
-
-    private String workingHours;
+    @ElementCollection
+    private List<Phone> contactNumber;
+    private String website;
+    private float averageRating;
+    @ElementCollection
+    private List<Schedule> schedule;
 
     @ManyToOne
     private User user;
