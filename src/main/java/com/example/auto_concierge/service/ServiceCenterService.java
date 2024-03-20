@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -63,4 +64,36 @@ public class ServiceCenterService {
     public void deleteServiceCenter(Long id) {
         serviceCenterRepository.deleteById(id);
     }
+
+    public List<ServiceCenter> findServiceCentersWithinRadius(double latitude, double longitude, double radius) {
+        List<ServiceCenter> serviceCenters = serviceCenterRepository.findAll();
+        List<ServiceCenter> serviceCentersWithinRadius = new ArrayList<>();
+
+        // Радиус Земли в километрах
+        final double earthRadius = 6371.0;
+
+        for (ServiceCenter serviceCenter : serviceCenters) {
+            double serviceCenterLat = Math.toRadians(serviceCenter.getAddress().getLatitude());
+            double serviceCenterLon = Math.toRadians(serviceCenter.getAddress().getLongitude());
+
+            double deltaLat = Math.toRadians(latitude - serviceCenterLat);
+            double deltaLon = Math.toRadians(longitude - serviceCenterLon);
+
+            double a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+                    Math.cos(serviceCenterLat) * Math.cos(latitude) *
+                            Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2);
+
+            double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+            double distance = earthRadius * c;
+
+            // Если расстояние меньше или равно заданному радиусу, добавляем сервис-центр в список
+            if (distance <= radius) {
+                serviceCentersWithinRadius.add(serviceCenter);
+            }
+        }
+
+        return serviceCentersWithinRadius;
+    }
 }
+

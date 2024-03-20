@@ -1,9 +1,11 @@
-package com.example.auto_concierge.controller;
+package com.example.auto_concierge.controller.serviceCenter;
 
 import com.example.auto_concierge.entity.ServiceCenter;
 import com.example.auto_concierge.service.ServiceCenterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+
 
 import java.util.List;
 
@@ -41,5 +43,13 @@ public class ServiceCenterController {
     @DeleteMapping("/{serviceCenterId}")
     public void deleteServiceCenter(@PathVariable Long serviceCenterId) {
         serviceCenterService.deleteServiceCenter(serviceCenterId);
+    }
+    @GetMapping("/within-radius")
+    public ResponseEntity<List<ServiceCenter>> findServiceCentersWithinRadius(
+            @RequestParam("latitude") double latitude,
+            @RequestParam("longitude") double longitude,
+            @RequestParam("radius") double radius) {
+        List<ServiceCenter> serviceCenters = serviceCenterService.findServiceCentersWithinRadius(latitude, longitude, radius);
+        return ResponseEntity.ok(serviceCenters);
     }
 }
