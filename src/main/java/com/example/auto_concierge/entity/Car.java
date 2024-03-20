@@ -28,6 +28,7 @@ public class Car {
     private String brand;
     private String model;
     @Past
+  //  @Column(name = "year", columnDefinition = "int")
     private LocalDate year;
     private String licensePlate;
     private Integer mileage;

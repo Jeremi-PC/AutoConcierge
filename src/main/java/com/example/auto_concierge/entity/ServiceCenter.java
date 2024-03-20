@@ -19,8 +19,8 @@ public class ServiceCenter {
     private Long id;
 
     private String name;
-
-    private String address;
+    @Embedded
+    private Address address;
     @ElementCollection
     private List<Phone> contactNumber;
     private String website;
@@ -29,7 +29,7 @@ public class ServiceCenter {
     private List<Schedule> schedule;
 
     @ManyToOne
-    private User user;
+    private User owner;
 
     @OneToMany(mappedBy = "serviceCenter")
     private List<ServiceRecord> serviceRecords;

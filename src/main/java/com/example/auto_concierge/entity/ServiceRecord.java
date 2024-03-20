@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Table (name = "service_records")
@@ -26,7 +27,7 @@ public class ServiceRecord {
     @Enumerated(EnumType.STRING)
     private ServiceType serviceType;
 
-    private LocalDateTime appointmentDateTime;
+    private ZonedDateTime appointmentDateTime;
 
     @Enumerated(EnumType.STRING)
     private Status status;

@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
 
 import java.util.HashSet;
 import java.util.List;
@@ -28,12 +29,13 @@ public class User {
     private String password;
     private String email;
     @ElementCollection
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private List<Phone> phoneNumber;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "owner")
     private Set<ServiceCenter> serviceCenters = new HashSet<>();
 
     @OneToMany(mappedBy = "user")

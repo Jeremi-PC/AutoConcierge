@@ -16,6 +16,6 @@ import java.util.TimeZone;
 @NoArgsConstructor
 public class Schedule {
     private DayOfWeek dayOfWeek;
-    private TimeZone beginOur;
-    private TimeZone endOur;
+    private TimeZone openTime;
+    private TimeZone closeTime;
 }
