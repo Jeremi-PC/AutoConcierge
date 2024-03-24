@@ -68,6 +68,7 @@ public class ServiceCenterService {
     public List<ServiceCenter> findServiceCentersWithinRadius(double latitude, double longitude, double radius) {
         List<ServiceCenter> serviceCenters = serviceCenterRepository.findAll();
         List<ServiceCenter> serviceCentersWithinRadius = new ArrayList<>();
+        double radiusInKm = radius * 3280.84;
 
         // Радиус Земли в километрах
         final double earthRadius = 6371.0;
@@ -88,7 +89,7 @@ public class ServiceCenterService {
             double distance = earthRadius * c;
 
             // Если расстояние меньше или равно заданному радиусу, добавляем сервис-центр в список
-            if (distance <= radius) {
+            if (distance <= radiusInKm) {
                 serviceCentersWithinRadius.add(serviceCenter);
             }
         }

@@ -4,9 +4,6 @@ import com.example.auto_concierge.dto.ServiceRecordDto;
 import com.example.auto_concierge.entity.Car;
 import com.example.auto_concierge.entity.ServiceCenter;
 import com.example.auto_concierge.entity.ServiceRecord;
-import com.example.auto_concierge.entity.User;
-import com.example.auto_concierge.repository.ServiceCenterRepository;
-import com.example.auto_concierge.repository.UserRepository;
 import com.example.auto_concierge.repository.ServiceRecordRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +30,7 @@ public class ServiceRecordService {
         Car car = carService.getCarByUserIdAndCarId(userId, carId);
         ServiceCenter serviceCenter = serviceCenterService.getServiceCenterById(serviceCenterId);
         if (car != null && serviceCenter != null) {
-            ServiceRecord serviceRecord = new ServiceRecord();
+            ServiceRecord serviceRecord = new ServiceRecord(car, serviceCenter, serviceRecordDto.getDateTime(), serviceRecordDto.getServices());
             // Заполнение данных из DTO или других параметров
             // serviceRecord.setSomeField(serviceRecordDTO.getSomeField());
             // serviceRecord.setSomeOtherField(serviceRecordDTO.getSomeOtherField());
