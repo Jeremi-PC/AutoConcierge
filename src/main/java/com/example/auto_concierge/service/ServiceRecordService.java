@@ -4,9 +4,6 @@ import com.example.auto_concierge.dto.ServiceRecordDto;
 import com.example.auto_concierge.entity.Car;
 import com.example.auto_concierge.entity.ServiceCenter;
 import com.example.auto_concierge.entity.ServiceRecord;
-import com.example.auto_concierge.entity.User;
-import com.example.auto_concierge.repository.ServiceCenterRepository;
-import com.example.auto_concierge.repository.UserRepository;
 import com.example.auto_concierge.repository.ServiceRecordRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,16 +26,18 @@ public class ServiceRecordService {
         this.serviceCenterService = serviceCenterService;
     }
 
-    public ServiceRecord createServiceRecord(Long userId, Long carId, Long serviceCenterId, ServiceRecordDto serviceRecordDto) {
-        Car car = carService.getCarByUserIdAndCarId(userId, carId);
+    public ServiceRecord createServiceRecord(Long carId, Long serviceCenterId, ServiceRecordDto serviceRecordDto) {
+        Car car = carService.getOneCar(carId);
         ServiceCenter serviceCenter = serviceCenterService.getServiceCenterById(serviceCenterId);
         if (car != null && serviceCenter != null) {
-            ServiceRecord serviceRecord = new ServiceRecord();
-            // Заполнение данных из DTO или других параметров
-            // serviceRecord.setSomeField(serviceRecordDTO.getSomeField());
-            // serviceRecord.setSomeOtherField(serviceRecordDTO.getSomeOtherField());
-            serviceRecord.setCar(car);
-            serviceRecord.setServiceCenter(serviceCenter);
+            ServiceRecord serviceRecord = new ServiceRecord(
+                    car,
+                    serviceCenter,
+                    serviceRecordDto.getServiceType(),
+                    serviceRecordDto.getAppoitmentDateTime(),
+                    serviceRecordDto.getServices()
+);
+
             // Сохранение записи обслуживания
             return serviceRecordRepository.save(serviceRecord);
         } else {

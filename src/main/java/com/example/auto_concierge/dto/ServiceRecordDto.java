@@ -1,16 +1,21 @@
 package com.example.auto_concierge.dto;
-import lombok.Data;
 
-import java.time.LocalDateTime;
+import com.example.auto_concierge.entity.Service;
+import com.example.auto_concierge.entity.ServiceType;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+
+import java.time.ZonedDateTime;
 import java.util.List;
 
-public class ServiceRecordDto {
 
-    @Data
-    public class AppointmentDto {
-        private Long serviceCenterId;
-        private LocalDateTime dateTime;
-        private List<String> services;
-        // Другие необходимые поля
-    }
+@AllArgsConstructor
+@Getter
+@Setter
+public class ServiceRecordDto {
+    private ServiceType serviceType;
+    private ZonedDateTime appoitmentDateTime;
+    private List<Service> services;
 }
