@@ -40,6 +40,9 @@ public class CarService {
     public List<Car> getAllCars() {
         return carRepository.findAll();
     }
+    public Car getOneCar(Long carId) {
+        return carRepository.findById(carId).orElse(null);
+    }
 
     public Car getCarByUserIdAndCarId(Long userId, Long carId) {
         return carRepository.findByOwnerIdAndId(userId, carId);

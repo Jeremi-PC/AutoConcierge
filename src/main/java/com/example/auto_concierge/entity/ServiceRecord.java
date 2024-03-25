@@ -1,16 +1,15 @@
 package com.example.auto_concierge.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Entity
 @Table (name = "service_records")
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
 public class ServiceRecord {
     @Id
@@ -28,7 +27,19 @@ public class ServiceRecord {
 
     private ZonedDateTime appointmentDateTime;
 
+    @ElementCollection
+    private List<Service> services;
+
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    public ServiceRecord(Car car, ServiceCenter serviceCenter, ServiceType serviceType, ZonedDateTime appointmentDateTime, List<Service> services) {
+        this.car = car;
+        this.serviceCenter = serviceCenter;
+        this.serviceType = serviceType;
+        this.appointmentDateTime = appointmentDateTime;
+        this.services = services;
+        this.status = Status.CREATED;
+    }
 
 }

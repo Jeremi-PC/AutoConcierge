@@ -15,8 +15,11 @@ import java.util.List;
 @Service
 @Transactional
 public class ServiceCenterService {
-
+    // Радиус Земли в километрах
     private final ServiceCenterRepository serviceCenterRepository;
+    private static final double earthRadius = 6371.0;
+    private static final double unknownKoefficient = 6371.0;
+
     private final UserRepository userRepository;
 
     @Autowired
@@ -68,15 +71,10 @@ public class ServiceCenterService {
     public List<ServiceCenter> findServiceCentersWithinRadius(double latitude, double longitude, double radius) {
         List<ServiceCenter> serviceCenters = serviceCenterRepository.findAll();
         List<ServiceCenter> serviceCentersWithinRadius = new ArrayList<>();
-        double radiusInKm = radius * 3280.84;
-
-        // Радиус Земли в километрах
-        final double earthRadius = 6371.0;
-
+        double radiusInKm = radius * unknownKoefficient;
         for (ServiceCenter serviceCenter : serviceCenters) {
             double serviceCenterLat = Math.toRadians(serviceCenter.getAddress().getLatitude());
             double serviceCenterLon = Math.toRadians(serviceCenter.getAddress().getLongitude());
-
             double deltaLat = Math.toRadians(latitude - serviceCenterLat);
             double deltaLon = Math.toRadians(longitude - serviceCenterLon);
 

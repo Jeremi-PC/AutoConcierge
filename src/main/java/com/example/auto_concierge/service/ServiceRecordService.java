@@ -26,16 +26,18 @@ public class ServiceRecordService {
         this.serviceCenterService = serviceCenterService;
     }
 
-    public ServiceRecord createServiceRecord(Long userId, Long carId, Long serviceCenterId, ServiceRecordDto serviceRecordDto) {
-        Car car = carService.getCarByUserIdAndCarId(userId, carId);
+    public ServiceRecord createServiceRecord(Long carId, Long serviceCenterId, ServiceRecordDto serviceRecordDto) {
+        Car car = carService.getOneCar(carId);
         ServiceCenter serviceCenter = serviceCenterService.getServiceCenterById(serviceCenterId);
         if (car != null && serviceCenter != null) {
-            ServiceRecord serviceRecord = new ServiceRecord(car, serviceCenter, serviceRecordDto.getDateTime(), serviceRecordDto.getServices());
-            // Заполнение данных из DTO или других параметров
-            // serviceRecord.setSomeField(serviceRecordDTO.getSomeField());
-            // serviceRecord.setSomeOtherField(serviceRecordDTO.getSomeOtherField());
-            serviceRecord.setCar(car);
-            serviceRecord.setServiceCenter(serviceCenter);
+            ServiceRecord serviceRecord = new ServiceRecord(
+                    car,
+                    serviceCenter,
+                    serviceRecordDto.getServiceType(),
+                    serviceRecordDto.getAppoitmentDateTime(),
+                    serviceRecordDto.getServices()
+);
+
             // Сохранение записи обслуживания
             return serviceRecordRepository.save(serviceRecord);
         } else {

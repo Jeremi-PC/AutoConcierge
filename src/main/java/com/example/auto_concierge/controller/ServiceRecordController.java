@@ -4,13 +4,14 @@ import com.example.auto_concierge.dto.ServiceRecordDto;
 import com.example.auto_concierge.entity.Car;
 import com.example.auto_concierge.entity.ServiceCenter;
 import com.example.auto_concierge.entity.ServiceRecord;
+import com.example.auto_concierge.entity.Status;
 import com.example.auto_concierge.service.CarService;
 import com.example.auto_concierge.service.ServiceCenterService;
 import com.example.auto_concierge.service.ServiceRecordService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/users/{userId}/car/{carId}/service-center/{serviceCenterId}")
+@RequestMapping("/api/")
 public class ServiceRecordController {
     private final ServiceRecordService serviceRecordService;
     private final CarService carService;
@@ -23,16 +24,11 @@ public class ServiceRecordController {
     }
 
 
-    @PostMapping("/create")
-    public ServiceRecord createAppointment(@PathVariable Long userId,
+    @PostMapping("car/{carId}/service-center/{serviceCenterId}/create")
+    public ServiceRecord createAppointment(
                                            @PathVariable Long carId,
                                            @PathVariable Long serviceCenterId,
                                            @RequestBody ServiceRecordDto serviceRecordDto) {
-        Car car = carService.getCarByUserIdAndCarId(userId, carId);
-        ServiceCenter serviceCenter = serviceCenterService.getServiceCenterById(serviceCenterId);
-
-        ServiceRecord serviceRecord = new ServiceRecord(car, serviceCenter, serviceRecordDto.getDateTime(), serviceRecordDto.getServices());
-
-        return serviceRecordService.createServiceRecord(serviceRecord);
+        return serviceRecordService.createServiceRecord(carId, serviceCenterId, serviceRecordDto);
     }
 }
