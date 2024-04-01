@@ -1,6 +1,6 @@
 package com.example.auto_concierge.controller;
 
-import com.example.auto_concierge.entity.Car;
+import com.example.auto_concierge.entity.car.Car;
 import com.example.auto_concierge.service.CarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

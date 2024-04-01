@@ -1,8 +1,8 @@
-package com.example.auto_concierge.entity;
+package com.example.auto_concierge.entity.user;
 
-import com.example.auto_concierge.entity.PartsOrder;
-import com.example.auto_concierge.entity.Role;
-import com.example.auto_concierge.entity.ServiceRecord;
+import com.example.auto_concierge.entity.*;
+import com.example.auto_concierge.entity.partsOrder.PartsOrder;
+import com.example.auto_concierge.entity.serviceCenter.ServiceCenter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,6 +1,8 @@
-package com.example.auto_concierge.entity;
+package com.example.auto_concierge.entity.serviceCenter;
 
-import com.github.javafaker.PhoneNumber;
+import com.example.auto_concierge.entity.Phone;
+import com.example.auto_concierge.entity.serviceRecord.ServiceRecord;
+import com.example.auto_concierge.entity.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,7 +30,7 @@ public class ServiceCenter {
     @ElementCollection
     private List<Schedule> schedule;
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     private User owner;
 
     @OneToMany(mappedBy = "serviceCenter")

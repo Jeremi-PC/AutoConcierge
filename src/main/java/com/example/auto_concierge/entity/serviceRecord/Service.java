@@ -1,4 +1,4 @@
-package com.example.auto_concierge.entity;
+package com.example.auto_concierge.entity.serviceRecord;
 
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;

@@ -1,5 +1,7 @@
-package com.example.auto_concierge.entity;
+package com.example.auto_concierge.entity.serviceRecord;
 
+import com.example.auto_concierge.entity.car.Car;
+import com.example.auto_concierge.entity.serviceCenter.ServiceCenter;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,30 +18,32 @@ public class ServiceRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     private Car car;
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     private ServiceCenter serviceCenter;
 
     @Enumerated(EnumType.STRING)
     private ServiceType serviceType;
 
     private ZonedDateTime appointmentDateTime;
-
+    private ZonedDateTime creatingTime;
     @ElementCollection
     private List<Service> services;
 
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    public ServiceRecord(Car car, ServiceCenter serviceCenter, ServiceType serviceType, ZonedDateTime appointmentDateTime, List<Service> services) {
+
+    public ServiceRecord(Car car, ServiceCenter serviceCenter, ServiceType serviceType, ZonedDateTime appointmentDateTime, List<Service> services, ZonedDateTime creatingTime) {
         this.car = car;
         this.serviceCenter = serviceCenter;
         this.serviceType = serviceType;
         this.appointmentDateTime = appointmentDateTime;
         this.services = services;
         this.status = Status.CREATED;
+        this.creatingTime = ZonedDateTime.now();
     }
 
 }

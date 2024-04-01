@@ -1,5 +1,7 @@
-package com.example.auto_concierge.entity;
+package com.example.auto_concierge.entity.partsOrder;
 
+import com.example.auto_concierge.entity.serviceRecord.Status;
+import com.example.auto_concierge.entity.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

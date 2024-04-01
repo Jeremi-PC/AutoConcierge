@@ -1,4 +1,4 @@
-package com.example.auto_concierge.entity;
+package com.example.auto_concierge.entity.serviceCenter;
 
 import jakarta.persistence.*;
 import lombok.*;

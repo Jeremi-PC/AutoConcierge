@@ -1,8 +1,8 @@
 package com.example.auto_concierge.service;
 
-import com.example.auto_concierge.entity.Role;
-import com.example.auto_concierge.entity.ServiceCenter;
-import com.example.auto_concierge.entity.User;
+import com.example.auto_concierge.entity.user.Role;
+import com.example.auto_concierge.entity.serviceCenter.ServiceCenter;
+import com.example.auto_concierge.entity.user.User;
 import com.example.auto_concierge.repository.ServiceCenterRepository;
 import com.example.auto_concierge.repository.UserRepository;
 import jakarta.transaction.Transactional;
