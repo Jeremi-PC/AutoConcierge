@@ -6,6 +6,7 @@ import com.example.auto_concierge.entity.user.User;
 import com.example.auto_concierge.repository.ServiceCenterRepository;
 import com.example.auto_concierge.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,9 +46,7 @@ public class ServiceCenterService {
         return serviceCenterRepository.findAll();
     }
 
-    public ServiceCenter getServiceCenterById(Long id) {
-        return serviceCenterRepository.findById(id).orElse(null);
-    }
+    public ServiceCenter getServiceCenterById(Long id) { return serviceCenterRepository.findById(id).orElse(null);}
 
     public ServiceCenter updateServiceCenter(Long id, ServiceCenter serviceCenterDetails) {
         ServiceCenter serviceCenter = serviceCenterRepository.findById(id).orElse(null);
