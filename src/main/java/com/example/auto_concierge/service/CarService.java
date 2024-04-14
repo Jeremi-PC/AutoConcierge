@@ -1,15 +1,13 @@
 package com.example.auto_concierge.service;
 
-import com.example.auto_concierge.entity.Car;
-import com.example.auto_concierge.entity.Role;
-import com.example.auto_concierge.entity.User;
+import com.example.auto_concierge.entity.car.Car;
+import com.example.auto_concierge.entity.user.Role;
+import com.example.auto_concierge.entity.user.User;
 import com.example.auto_concierge.repository.CarRepository;
 import com.example.auto_concierge.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.Null;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -39,6 +37,9 @@ public class CarService {
 
     public List<Car> getAllCars() {
         return carRepository.findAll();
+    }
+    public Car getCarById(Long carId) {
+        return carRepository.findById(carId).orElse(null);
     }
 
     public Car getCarByUserIdAndCarId(Long userId, Long carId) {

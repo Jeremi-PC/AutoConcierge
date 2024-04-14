@@ -1,6 +1,6 @@
 package com.example.auto_concierge.controller.serviceCenter;
 
-import com.example.auto_concierge.entity.ServiceCenter;
+import com.example.auto_concierge.entity.serviceCenter.ServiceCenter;
 import com.example.auto_concierge.service.ServiceCenterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

@@ -3,7 +3,7 @@ package com.example.auto_concierge.service;
 import com.example.auto_concierge.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-import com.example.auto_concierge.entity.User;
+import com.example.auto_concierge.entity.user.User;
 import java.util.List;
 
 @Service

@@ -1,11 +1,12 @@
 package com.example.auto_concierge.service;
 
-import com.example.auto_concierge.entity.Role;
-import com.example.auto_concierge.entity.ServiceCenter;
-import com.example.auto_concierge.entity.User;
+import com.example.auto_concierge.entity.user.Role;
+import com.example.auto_concierge.entity.serviceCenter.ServiceCenter;
+import com.example.auto_concierge.entity.user.User;
 import com.example.auto_concierge.repository.ServiceCenterRepository;
 import com.example.auto_concierge.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +16,11 @@ import java.util.List;
 @Service
 @Transactional
 public class ServiceCenterService {
-
+    // Радиус Земли в километрах
     private final ServiceCenterRepository serviceCenterRepository;
+    private static final double earthRadius = 6371.0;
+    private static final double unknownKoefficient = 6371.0;
+
     private final UserRepository userRepository;
 
     @Autowired
@@ -42,9 +46,7 @@ public class ServiceCenterService {
         return serviceCenterRepository.findAll();
     }
 
-    public ServiceCenter getServiceCenterById(Long id) {
-        return serviceCenterRepository.findById(id).orElse(null);
-    }
+    public ServiceCenter getServiceCenterById(Long id) { return serviceCenterRepository.findById(id).orElse(null);}
 
     public ServiceCenter updateServiceCenter(Long id, ServiceCenter serviceCenterDetails) {
         ServiceCenter serviceCenter = serviceCenterRepository.findById(id).orElse(null);
@@ -68,14 +70,10 @@ public class ServiceCenterService {
     public List<ServiceCenter> findServiceCentersWithinRadius(double latitude, double longitude, double radius) {
         List<ServiceCenter> serviceCenters = serviceCenterRepository.findAll();
         List<ServiceCenter> serviceCentersWithinRadius = new ArrayList<>();
-
-        // Радиус Земли в километрах
-        final double earthRadius = 6371.0;
-
+        double radiusInKm = radius * unknownKoefficient;
         for (ServiceCenter serviceCenter : serviceCenters) {
             double serviceCenterLat = Math.toRadians(serviceCenter.getAddress().getLatitude());
             double serviceCenterLon = Math.toRadians(serviceCenter.getAddress().getLongitude());
-
             double deltaLat = Math.toRadians(latitude - serviceCenterLat);
             double deltaLon = Math.toRadians(longitude - serviceCenterLon);
 
@@ -88,7 +86,7 @@ public class ServiceCenterService {
             double distance = earthRadius * c;
 
             // Если расстояние меньше или равно заданному радиусу, добавляем сервис-центр в список
-            if (distance <= radius) {
+            if (distance <= radiusInKm) {
                 serviceCentersWithinRadius.add(serviceCenter);
             }
         }

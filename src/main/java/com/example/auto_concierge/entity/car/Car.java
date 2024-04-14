@@ -1,7 +1,8 @@
-package com.example.auto_concierge.entity;
+package com.example.auto_concierge.entity.car;
 
 
 
+import com.example.auto_concierge.entity.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Past;
 import lombok.AllArgsConstructor;
@@ -21,7 +22,7 @@ public class Car {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
     private User owner;
 

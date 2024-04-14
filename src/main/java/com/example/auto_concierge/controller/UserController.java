@@ -1,7 +1,6 @@
 package com.example.auto_concierge.controller;
-import com.example.auto_concierge.entity.User;
+import com.example.auto_concierge.entity.user.User;
 import com.example.auto_concierge.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
