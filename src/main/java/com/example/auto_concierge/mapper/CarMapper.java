@@ -12,7 +12,9 @@ public interface CarMapper {
     CarMapper INSTANCE = Mappers.getMapper(CarMapper.class);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "owner", ignore = true)     // Ignore owner mapping
     Car carDtoToCar(CarDTO carDTO);
 
+    @Mapping(target = "ownerId", ignore = true)      // Ignore owner mapping
     CarDTO carToCarDto(Car car);
 }

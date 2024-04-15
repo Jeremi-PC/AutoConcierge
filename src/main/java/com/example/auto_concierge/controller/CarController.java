@@ -1,5 +1,6 @@
 package com.example.auto_concierge.controller;
 
+import com.example.auto_concierge.dto.car.CarDTO;
 import com.example.auto_concierge.entity.car.Car;
 import com.example.auto_concierge.service.CarService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +20,8 @@ public class CarController {
     }
 
     @PostMapping("/create")
-    public Car createCar(@PathVariable Long userId, @RequestBody Car car) {
-        return carService.createCar(userId, car);
+    public Car createCar(@PathVariable Long userId, @RequestBody CarDTO carDTO) {
+        return carService.createCar(userId, carDTO);
     }
 
     @GetMapping

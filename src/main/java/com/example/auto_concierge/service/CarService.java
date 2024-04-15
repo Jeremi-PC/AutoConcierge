@@ -1,8 +1,10 @@
 package com.example.auto_concierge.service;
 
+import com.example.auto_concierge.dto.car.CarDTO;
 import com.example.auto_concierge.entity.car.Car;
 import com.example.auto_concierge.entity.user.Role;
 import com.example.auto_concierge.entity.user.User;
+import com.example.auto_concierge.mapper.CarMapper;
 import com.example.auto_concierge.repository.CarRepository;
 import com.example.auto_concierge.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -16,14 +18,17 @@ public class CarService {
 
     private final CarRepository carRepository;
     private final UserRepository userRepository;
+    private final CarMapper carMapper;
 
-    public CarService(CarRepository carRepository, UserRepository userRepository) {
+    public CarService(CarRepository carRepository, UserRepository userRepository, CarMapper carMapper) {
         this.carRepository = carRepository;
         this.userRepository = userRepository;
+        this.carMapper = carMapper;
     }
 
-    public Car createCar(Long userId, Car car) {
+    public Car createCar(Long userId, CarDTO carDTO) {
         User user = userRepository.findById(userId).orElse(null);
+        Car car = carMapper.carDtoToCar(carDTO);
         if (user != null && user.getRole() == Role.CLIENT) {
             if (carRepository.existsByVin(car.getVin())) {
                 throw new RuntimeException("Машина с таким VIN уже существует");
