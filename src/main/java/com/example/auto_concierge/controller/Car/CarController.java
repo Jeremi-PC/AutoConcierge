@@ -1,4 +1,4 @@
-package com.example.auto_concierge.controller;
+package com.example.auto_concierge.controller.Car;
 
 import com.example.auto_concierge.dto.car.CarDTO;
 import com.example.auto_concierge.entity.car.Car;
@@ -25,22 +25,7 @@ public class CarController {
     }
 
     @GetMapping
-    public List<Car> geCarsByUserId(@PathVariable Long userId) {
+    public List<CarDTO> getCarsByUserId(@PathVariable Long userId) {
         return carService.getCarByUserId(userId);
-    }
-
-    @GetMapping("/{carId}")
-    public Car getCarByUserIdAndCarId(@PathVariable Long userId, @PathVariable Long carId) {
-        return carService.getCarByUserIdAndCarId(userId, carId);
-    }
-
-    @PutMapping("/{carId}")
-    public Car updateCar(@PathVariable Long userId, @PathVariable Long carId, @RequestBody Car carDetails) {
-        return carService.updateCar(userId, carId, carDetails);
-    }
-
-    @DeleteMapping("/{carId}")
-    public void deleteCar(@PathVariable Long userId, @PathVariable Long carId) {
-        carService.deleteCar(userId, carId);
     }
 }

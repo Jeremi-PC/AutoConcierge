@@ -25,16 +25,6 @@ public class ServiceCenterController {
         return serviceCenterService.createServiceCenter(userId, serviceCenter);
     }
 
-    @GetMapping
-    public List<ServiceCenter> getAllServiceCenters() {
-        return serviceCenterService.getAllServiceCenters();
-    }
-
-    @GetMapping("/{serviceCenterId}")
-    public ServiceCenter getServiceCenterById(@PathVariable Long serviceCenterId) {
-        return serviceCenterService.getServiceCenterById(serviceCenterId);
-    }
-
     @PutMapping("/{serviceCenterId}")
     public ServiceCenter updateServiceCenter(@PathVariable Long serviceCenterId, @RequestBody ServiceCenter serviceCenterDetails) {
         return serviceCenterService.updateServiceCenter(serviceCenterId, serviceCenterDetails);

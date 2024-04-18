@@ -25,8 +25,12 @@ public class ServiceRecordController {
     }
     @GetMapping("/service-records/{id}")
     public ResponseEntity<ServiceRecord> getServiceRecordById(@PathVariable Long id) {
-        Optional<ServiceRecord> optionalServiceRecord = serviceRecordService.getServiceRecord(id);
-        return optionalServiceRecord.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        ServiceRecord serviceRecord = serviceRecordService.getServiceRecord(id);
+        if (serviceRecord != null) {
+            return ResponseEntity.ok(serviceRecord);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
+
 }

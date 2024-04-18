@@ -10,7 +10,9 @@ import com.example.auto_concierge.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -40,41 +42,61 @@ public class CarService {
         }
     }
 
-    public List<Car> getAllCars() {
-        return carRepository.findAll();
+    public List<CarDTO> getAllCars() {
+        List<Car> cars = carRepository.findAll();
+        return cars.stream()
+                .map(CarMapper.INSTANCE::carToCarDto)
+                .collect(Collectors.toList());
     }
+
     public Car getCarById(Long carId) {
         return carRepository.findById(carId).orElse(null);
     }
-
-    public Car getCarByUserIdAndCarId(Long userId, Long carId) {
-        return carRepository.findByOwnerIdAndId(userId, carId);
+    public CarDTO getCarDTOById(Long carId) {
+        Car car = carRepository.findById(carId).orElse(null);
+        if (car != null) {
+            return CarMapper.INSTANCE.carToCarDto(car);
+        } else {
+            return null;
+        }
     }
 
-    public List<Car> getCarByUserId(Long userId) {
-        return carRepository.findAllByOwnerId(userId);
-    }
-
-    public Car updateCar(Long userId, Long carId, Car carDetails) {
+    public List<CarDTO> getCarByUserId(Long userId) {
         User user = userRepository.findById(userId).orElse(null);
-        Car car = carRepository.findByOwnerIdAndId(userId, carId);
-        if (car != null || user != null) {
-            car.setOwner(user);
+        if (user != null) {
+            List<Car> cars = carRepository.findAllByOwnerId(userId);
+            return cars.stream()
+                    .map(CarMapper.INSTANCE::carToCarDto)
+                    .collect(Collectors.toList());
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    public CarDTO updateCar(Long carId, Car carDetails) {
+        Car car = carRepository.findById(carId).orElse(null);
+        if (car != null) {
+            User user = car.getOwner();
+            if (user != null) {
+                car.setOwner(user);
+            } else {
+                throw new RuntimeException("Не возможно найти владельца машины");
+            }
             car.setBrand(carDetails.getBrand());
             car.setModel(carDetails.getModel());
             car.setVin(carDetails.getVin());
             car.setMileage(carDetails.getMileage());
             car.setYear(carDetails.getYear());
             car.setEngineType(carDetails.getEngineType());
-            return carRepository.save(car);
+            Car updatedCar = carRepository.save(car);
+            return carMapper.carToCarDto(updatedCar);
         } else {
             throw new RuntimeException("Не возможно найти машину");
         }
     }
 
-
-    public void deleteCar(Long userId, Long carId) {
-        Car car = carRepository.findByOwnerIdAndId(userId, carId);
+    public void deleteCar(Long carId) {
+        Car car = carRepository.findById(carId).orElse(null);;
         if (car != null) {
             carRepository.deleteById(carId);
         } else

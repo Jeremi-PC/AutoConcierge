@@ -8,6 +8,4 @@ import java.util.List;
 public interface CarRepository extends JpaRepository<Car, Long> {
     boolean existsByVin(String vin);
     List<Car> findAllByOwnerId(Long userId);
-    Car findByOwnerIdAndId(Long userId, Long carId);
-
 }

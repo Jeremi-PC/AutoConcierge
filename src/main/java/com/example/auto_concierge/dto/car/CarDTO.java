@@ -11,7 +11,7 @@ public record CarDTO(
         Integer mileage,
         String vin,
         String engineType,
-        Long ownerId
+        Long owner
 ) {}
 
 

@@ -1,12 +1,13 @@
 package com.example.auto_concierge.service;
 
+import com.example.auto_concierge.dto.serviceCenter.ServiceCenterDTO;
 import com.example.auto_concierge.entity.user.Role;
 import com.example.auto_concierge.entity.serviceCenter.ServiceCenter;
 import com.example.auto_concierge.entity.user.User;
+import com.example.auto_concierge.mapper.ServiceCenterMapper;
 import com.example.auto_concierge.repository.ServiceCenterRepository;
 import com.example.auto_concierge.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,14 +19,16 @@ import java.util.List;
 public class ServiceCenterService {
     // Радиус Земли в километрах
     private final ServiceCenterRepository serviceCenterRepository;
+    private final ServiceCenterMapper serviceCenterMapper;
     private static final double earthRadius = 6371.0;
     private static final double unknownKoefficient = 6371.0;
 
     private final UserRepository userRepository;
 
     @Autowired
-    public ServiceCenterService(ServiceCenterRepository serviceCenterRepository, UserRepository userRepository) {
+    public ServiceCenterService(ServiceCenterRepository serviceCenterRepository, ServiceCenterMapper serviceCenterMapper, UserRepository userRepository) {
         this.serviceCenterRepository = serviceCenterRepository;
+        this.serviceCenterMapper = serviceCenterMapper;
         this.userRepository = userRepository;
     }
 
@@ -46,7 +49,17 @@ public class ServiceCenterService {
         return serviceCenterRepository.findAll();
     }
 
-    public ServiceCenter getServiceCenterById(Long id) { return serviceCenterRepository.findById(id).orElse(null);}
+    public ServiceCenterDTO getServiceCenterDTOById(Long id) {
+        ServiceCenter serviceCenter = serviceCenterRepository.findById(id).orElse(null);
+        if (serviceCenter != null) {
+            return serviceCenterMapper.serviceCenterToServiceCenterDto(serviceCenter);
+        } else {
+            return null;
+        }
+    }
+    public ServiceCenter getServiceCenterById(Long id) {
+        return serviceCenterRepository.findById(id).orElse(null);
+    }
 
     public ServiceCenter updateServiceCenter(Long id, ServiceCenter serviceCenterDetails) {
         ServiceCenter serviceCenter = serviceCenterRepository.findById(id).orElse(null);

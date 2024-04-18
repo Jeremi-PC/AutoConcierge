@@ -19,9 +19,11 @@ public class ServiceRecord {
     private Long id;
 
     @ManyToOne (fetch = FetchType.LAZY)
+    @JoinColumn(name = "car_id")
     private Car car;
 
     @ManyToOne (fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_center_id")
     private ServiceCenter serviceCenter;
 
     @Enumerated(EnumType.STRING)

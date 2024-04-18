@@ -15,6 +15,7 @@ public interface CarMapper {
     @Mapping(target = "owner", ignore = true)     // Ignore owner mapping
     Car carDtoToCar(CarDTO carDTO);
 
-    @Mapping(target = "ownerId", ignore = true)      // Ignore owner mapping
+
+    @Mapping(target = "owner", source = "owner.id")
     CarDTO carToCarDto(Car car);
 }

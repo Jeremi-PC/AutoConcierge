@@ -14,5 +14,5 @@ public record ServiceCenterDTO(
         String website,
         float averageRating,
         List<Schedule> schedule,
-        Long ownerId
+        Long owner
 ) {}

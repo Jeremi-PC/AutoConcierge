@@ -3,6 +3,8 @@ package com.example.auto_concierge.entity.serviceCenter;
 import com.example.auto_concierge.entity.Phone;
 import com.example.auto_concierge.entity.serviceRecord.ServiceRecord;
 import com.example.auto_concierge.entity.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,10 +33,12 @@ public class ServiceCenter {
     private List<Schedule> schedule;
 
     @ManyToOne (fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private User owner;
 
     @OneToMany(mappedBy = "serviceCenter")
+    @JsonIgnore
     private List<ServiceRecord> serviceRecords;
-
 
 }
