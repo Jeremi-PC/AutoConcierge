@@ -59,7 +59,7 @@ public class CarService {
             car.setModel(carDetails.getModel());
             car.setVin(carDetails.getVin());
             car.setMileage(carDetails.getMileage());
-            car.setYear(carDetails.getYear());
+            car.setYearOfCreating(carDetails.getYearOfCreating());
             car.setEngineType(carDetails.getEngineType());
             return carRepository.save(car);
         } else {
