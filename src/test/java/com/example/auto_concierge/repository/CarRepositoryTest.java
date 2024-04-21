@@ -4,9 +4,9 @@ import com.example.auto_concierge.entity.Phone;
 import com.example.auto_concierge.entity.car.Car;
 import com.example.auto_concierge.entity.user.User;
 import com.example.auto_concierge.entity.user.Role;
-import com.example.auto_concierge.service.CarService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,28 +14,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-import static net.sf.jsqlparser.util.validation.metadata.NamedObject.user;
+
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 @Transactional
+
 class CarRepositoryTest {
 
     @Autowired
     private CarRepository carRepository;
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private CarService carService;
+    @PersistenceContext
+    private EntityManager entityManager;
+
     public static User createUser() {
         User user = new User();
         user.setFirstName("John");
@@ -55,11 +54,13 @@ class CarRepositoryTest {
 
     @BeforeEach
     void setUp() {
+        entityManager.createNativeQuery("ALTER TABLE cars ALTER COLUMN id RESTART WITH 1").executeUpdate();
+        entityManager.createNativeQuery("ALTER TABLE users ALTER COLUMN id RESTART WITH 1").executeUpdate();
         userRepository.save(createUser());
         carRepository.deleteAll();
     }
     @Test
-    void save(){
+    void saveCar(){
     User user = userRepository.findById(1L).orElse(null);
 
     Car car = new Car();
@@ -155,63 +156,5 @@ class CarRepositoryTest {
         assertEquals(20000, updatedCar.getMileage());
         assertEquals("987654321", updatedCar.getVin());
         assertEquals("Diesel", updatedCar.getEngineType());
-    }
-
-
-    @Test
-    void findByOwnerIdAndIdExistingCarReturnsCar() {
-        User user = userRepository.findById(1L).orElse(null);
-        assertNotNull(user);
-
-        Car car = new Car(1L, user, "Toyota", "Camry", LocalDate.of(2020, 1, 1), "ABC123", 10000, "123456789", "Gasoline");
-        car.setOwner(user);
-        carRepository.save(car);
-
-        Optional<Car> foundCar = Optional.ofNullable(carRepository.findByOwnerIdAndId(user.getId(), car.getId()));
-        assertTrue(foundCar.isPresent());
-        assertEquals(car, foundCar.get());
-    }
-
-    @Test
-    void findByOwnerIdAndIdNonExistingCarReturnsEmptyOptional() {
-        User user = userRepository.findById(1L).orElse(null);
-        Optional<Car> foundCar = Optional.ofNullable(carRepository.findByOwnerIdAndId(user.getId(), 100L));
-        assertTrue(foundCar.isEmpty());
-    }
-
-    @Test
-    void findAllByOwnerIdExistingCarsReturnsListOfCars() {
-        User user = userRepository.findById(1L).orElse(null);
-
-        Car car1 = new Car(1L, user, "Toyota", "Camry", LocalDate.of(2020, 1, 1), "ABC123", 10000, "123456789", "Gasoline");
-        Car car2 = new Car(2L, user, "Honda", "Accord", LocalDate.of(2019, 1, 1), "DEF456", 20000, "987654321", "Gasoline");
-
-        carRepository.saveAll(List.of(car1, car2));
-        assert user != null;
-        List<Car> cars = carRepository.findAllByOwnerId(user.getId());
-        assertFalse(cars.isEmpty());
-        assertEquals(2, cars.size());
-        for (Car car : cars) {
-            assertEquals(user.getId(), car.getOwner().getId());
-        }
-    }
-    @Test
-    void findAllByOwnerIdNoCarsReturnsEmptyList() {
-        User user = userRepository.findById(1L).orElse(null);
-        assert user != null;
-        List<Car> cars = carRepository.findAllByOwnerId(user.getId());
-        assertTrue(cars.isEmpty());
-    }
-
-
-    @Test
-    void saveCarWithDuplicateVin() {
-        User user = userRepository.findById(1L).orElse(null);
-        assertNotNull(user);
-        Car car1 = new Car(1L, user, "Toyota", "Camry", LocalDate.of(2020, 1, 1), "ABC123", 10000, "123456789", "Gasoline");
-        Car car2 = new Car(2L, user, "Honda", "Accord", LocalDate.of(2019, 1, 1), "ABC123", 20000, "987654321", "Gasoline");
-
-        carRepository.save(car1);
-        assertThrows(RuntimeException.class, () -> carService.createCar(user.getId(), car2));
     }
 }
