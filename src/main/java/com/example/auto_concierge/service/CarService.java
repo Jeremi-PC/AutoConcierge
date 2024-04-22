@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
 
 @Service
 @Transactional
@@ -50,8 +52,14 @@ public class CarService {
     }
 
     public Car getCarById(Long carId) {
-        return carRepository.findById(carId).orElse(null);
+        Optional<Car> optionalCar = carRepository.findById(carId);
+        if (optionalCar.isPresent()) {
+            return optionalCar.get();
+        } else {
+            throw new IllegalArgumentException("Автомобиль с идентификатором " + carId + " не найден");
+        }
     }
+
     public CarDTO getCarDTOById(Long carId) {
         Car car = carRepository.findById(carId).orElse(null);
         if (car != null) {
@@ -86,12 +94,12 @@ public class CarService {
             car.setModel(carDetails.getModel());
             car.setVin(carDetails.getVin());
             car.setMileage(carDetails.getMileage());
-            car.setYear(carDetails.getYear());
+            car.setYearOfCreating(carDetails.getYearOfCreating());
             car.setEngineType(carDetails.getEngineType());
             Car updatedCar = carRepository.save(car);
             return carMapper.carToCarDto(updatedCar);
         } else {
-            throw new RuntimeException("Не возможно найти машину");
+            throw new RuntimeException("Невозможно найти машину");
         }
     }
 
@@ -100,7 +108,7 @@ public class CarService {
         if (car != null) {
             carRepository.deleteById(carId);
         } else
-            throw new RuntimeException("Не возможно найти машину");
+            throw new RuntimeException("Невозможно найти машину");
     }
 }
 
