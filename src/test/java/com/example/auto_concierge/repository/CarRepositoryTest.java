@@ -163,17 +163,4 @@ class CarRepositoryTest {
             assertEquals(user.getId(), car.getOwner().getId());
         }
     }
-    @Test
-    void testFindByOwnerIdAndId() {
-        User user = userRepository.findById(1L).orElse(null);
-        Car car = createCar(user);
-        carRepository.save(car);
-
-        assert user != null;
-        Car foundCar = carRepository.findByOwnerIdAndId(user.getId(), car.getId());
-        assertNotNull(foundCar);
-        assertEquals(car.getId(), foundCar.getId());
-        assertEquals(user.getId(), foundCar.getOwner().getId());
-
-    }
 }

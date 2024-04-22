@@ -93,7 +93,6 @@ class UserRepositoryTest {
     void deleteUser() {
         User user = createUser();
         userRepository.save(user);
-
         userRepository.deleteById(user.getId());
         assertFalse(userRepository.findById(user.getId()).isPresent());
     }
