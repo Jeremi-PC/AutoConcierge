@@ -53,6 +53,16 @@ class ServiceCenterRepositoryTest {
         Phone contactNumber2 = new Phone("+1", "987", "654321");
         return List.of(contactNumber1, contactNumber2);
     }
+    private ServiceCenter createServiceCenter(User user){
+        ServiceCenter serviceCenter = new ServiceCenter();
+        serviceCenter.setOwner(user);
+        serviceCenter.setName("Example Service Center");
+        serviceCenter.setAddress(createAddress());
+        serviceCenter.setContactNumber(createContactNumbers());
+        serviceCenter.setWebsite("http://example.com");
+        serviceCenter.setAverageRating(4.5f);
+        return serviceCenter;
+    }
 
     @BeforeEach
     void setUp() {
@@ -65,13 +75,7 @@ class ServiceCenterRepositoryTest {
     void saveServiceCenter() {
         User user = userRepository.findById(1L).orElse(null);
 
-        ServiceCenter serviceCenter = new ServiceCenter();
-        serviceCenter.setOwner(user);
-        serviceCenter.setName("Example Service Center");
-        serviceCenter.setAddress(createAddress());
-        serviceCenter.setContactNumber(createContactNumbers());
-        serviceCenter.setWebsite("http://example.com");
-        serviceCenter.setAverageRating(4.5f);
+        ServiceCenter serviceCenter = createServiceCenter(user);
 
         serviceCenterRepository.save(serviceCenter);
 
@@ -83,13 +87,7 @@ class ServiceCenterRepositoryTest {
         User user = userRepository.findById(1L).orElse(null);
         assertNotNull(user);
 
-        ServiceCenter serviceCenter = new ServiceCenter();
-        serviceCenter.setOwner(user);
-        serviceCenter.setName("Example Service Center");
-        serviceCenter.setAddress(createAddress());
-        serviceCenter.setContactNumber(createContactNumbers());
-        serviceCenter.setWebsite("http://example.com");
-        serviceCenter.setAverageRating(4.5f);
+        ServiceCenter serviceCenter = createServiceCenter(user);
         serviceCenterRepository.save(serviceCenter);
 
         Optional<ServiceCenter> optionalServiceCenter = serviceCenterRepository.findById(serviceCenter.getId());
@@ -101,21 +99,8 @@ class ServiceCenterRepositoryTest {
         User user = userRepository.findById(1L).orElse(null);
         assertNotNull(user);
 
-        ServiceCenter serviceCenter1 = new ServiceCenter();
-        serviceCenter1.setOwner(user);
-        serviceCenter1.setName("Service Center 1");
-        serviceCenter1.setAddress(createAddress());
-        serviceCenter1.setContactNumber(createContactNumbers());
-        serviceCenter1.setWebsite("http://example.com");
-        serviceCenter1.setAverageRating(4.5f);
-
-        ServiceCenter serviceCenter2 = new ServiceCenter();
-        serviceCenter2.setOwner(user);
-        serviceCenter2.setName("Service Center 2");
-        serviceCenter2.setAddress(createAddress());
-        serviceCenter2.setContactNumber(createContactNumbers());
-        serviceCenter2.setWebsite("http://example.com");
-        serviceCenter2.setAverageRating(4.5f);
+        ServiceCenter serviceCenter1 = createServiceCenter(user);
+        ServiceCenter serviceCenter2 = createServiceCenter(user);
 
         serviceCenterRepository.saveAll(List.of(serviceCenter1, serviceCenter2));
 
@@ -130,14 +115,13 @@ class ServiceCenterRepositoryTest {
         User user = userRepository.findById(1L).orElse(null);
         assertNotNull(user);
 
-        ServiceCenter serviceCenter = new ServiceCenter(1L, "Service Center 1", createAddress(), createContactNumbers(),"http://example.com", 4.0f, null,user,null);
+        ServiceCenter serviceCenter = createServiceCenter(user);
 
         String newName = "Updated Service Center Name";
         serviceCenter.setName(newName);
         serviceCenter.setAverageRating(4.0f);
 
         serviceCenterRepository.save(serviceCenter);
-
 
         Optional<ServiceCenter> updatedServiceCenter = serviceCenterRepository.findById(serviceCenter.getId());
         assertTrue(updatedServiceCenter.isPresent());
@@ -151,8 +135,7 @@ class ServiceCenterRepositoryTest {
         User user = userRepository.findById(1L).orElse(null);
         assertNotNull(user);
 
-        ServiceCenter serviceCenter = new ServiceCenter(1L, "Service Center 1", createAddress(), createContactNumbers(),"http://example.com", 4.0f, null,user,null);
-
+        ServiceCenter serviceCenter = createServiceCenter(user);
 
         serviceCenterRepository.save(serviceCenter);
 
@@ -169,13 +152,7 @@ class ServiceCenterRepositoryTest {
         User user = userRepository.findById(1L).orElse(null);
         assertNotNull(user);
 
-        ServiceCenter serviceCenter = new ServiceCenter();
-        serviceCenter.setOwner(user);
-        serviceCenter.setName("Example Service Center");
-        serviceCenter.setAddress(createAddress());
-        serviceCenter.setContactNumber(createContactNumbers());
-        serviceCenter.setWebsite("http://example.com");
-        serviceCenter.setAverageRating(4.5f);
+        ServiceCenter serviceCenter = createServiceCenter(user);
         serviceCenterRepository.save(serviceCenter);
 
         boolean existsServiceCenter = serviceCenterRepository.existsByAddress(createAddress());
@@ -186,13 +163,8 @@ class ServiceCenterRepositoryTest {
         User user = userRepository.findById(1L).orElse(null);
         assertNotNull(user);
 
-        ServiceCenter serviceCenter = new ServiceCenter();
-        serviceCenter.setOwner(user);
+        ServiceCenter serviceCenter = createServiceCenter(user);
         serviceCenter.setName("");
-        serviceCenter.setAddress(createAddress());
-        serviceCenter.setContactNumber(createContactNumbers());
-        serviceCenter.setWebsite("http://example.com");
-        serviceCenter.setAverageRating(4.5f);
 
         assertThrows(Exception.class, () -> {
             serviceCenterRepository.save(serviceCenter);

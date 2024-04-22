@@ -26,6 +26,16 @@ class UserRepositoryTest {
     @PersistenceContext
     private EntityManager entityManager;
 
+    private User createUser(){
+        User user = new User();
+        user.setFirstName("John");
+        user.setLastName("Brown");
+        user.setEmail("johnbrown@email.com");
+        user.setPhoneNumber(List.of(new Phone("+1", "564", "456789")));
+        user.setUsername("johnbrown");
+        user.setPassword("password123");
+        return user;
+    }
 
 
     @BeforeEach
@@ -36,13 +46,7 @@ class UserRepositoryTest {
     @Test
     void save() {
         assertTrue(userRepository.findAll().isEmpty());
-        User user = new User();
-        user.setFirstName("John");
-        user.setLastName("Brown");
-        user.setEmail("johnbrown@email.com");
-        user.setPhoneNumber(List.of(new Phone("+1", "564", "456789")));
-        user.setUsername("johnbrown");
-        user.setPassword("password123");
+        User user = createUser();
         User savedUser = userRepository.save(user);
        User fromDB = userRepository.findById(savedUser.getId()).orElseThrow();
        assertNotNull(fromDB);
@@ -52,23 +56,13 @@ class UserRepositoryTest {
     @Test
     void saveUserWithIncompleteData() {
         assertTrue(userRepository.findAll().isEmpty());
-
-        User user = new User();
-        user.setFirstName("John");
-        user.setLastName("Brown");
-        user.setPhoneNumber(List.of(new Phone("+1", "564", "456789")));
+        User user = createUser();
         user.setEmail("");
-
         assertThrows(ConstraintViolationException.class, () -> userRepository.save(user));
     }
     @Test
     void findUserById() {
-        User user = new User();
-        user.setFirstName("John");
-        user.setLastName("Doe");
-        user.setEmail("john.doe@example.com");
-        user.setUsername("johnbrown");
-        user.setPassword("password123");
+        User user = createUser();
         userRepository.save(user);
 
         Optional<User> optionalUser = userRepository.findById(user.getId());
@@ -97,12 +91,7 @@ class UserRepositoryTest {
 
     @Test
     void deleteUser() {
-        User user = new User();
-        user.setFirstName("John");
-        user.setLastName("Doe");
-        user.setEmail("john.doe@example.com");
-        user.setUsername("johnbrown");
-        user.setPassword("password123");
+        User user = createUser();
         userRepository.save(user);
 
         userRepository.deleteById(user.getId());
@@ -136,5 +125,13 @@ class UserRepositoryTest {
         assertEquals("updated.email@example.com", updatedUser.getEmail());
         assertEquals("johnbrown", updatedUser.getUsername());
         assertEquals("password123", updatedUser.getPassword());
+    }
+    @Test
+    void findUserByEmail(){
+        User user = createUser();
+        userRepository.save(user);
+        User foundUser = userRepository.findByEmail(user.getEmail());
+        assert foundUser != null;
+        assert foundUser.getEmail().equals(user.getEmail());
     }
 }

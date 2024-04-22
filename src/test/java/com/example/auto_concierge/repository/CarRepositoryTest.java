@@ -51,6 +51,18 @@ class CarRepositoryTest {
         user.setRole(Role.CLIENT);
         return user;
     }
+    private Car createCar(User user){
+        Car car = new Car();
+        car.setOwner(user);
+        car.setBrand("Toyota");
+        car.setModel("Camry");
+        car.setVin("123456789");
+        car.setYearOfCreating(LocalDate.parse("2020-01-01"));
+        car.setLicensePlate("ABC123");
+        car.setMileage(50000);
+        car.setEngineType("Gasoline");
+        return car;
+    }
 
     @BeforeEach
     void setUp() {
@@ -61,29 +73,18 @@ class CarRepositoryTest {
     }
     @Test
     void saveCar(){
-    User user = userRepository.findById(1L).orElse(null);
-
-    Car car = new Car();
-        car.setOwner(user);
-        car.setBrand("Toyota");
-        car.setModel("Camry");
-        car.setVin("123456789");
-        car.setYearOfCreating(LocalDate.parse("2020-01-01"));
-        car.setLicensePlate("ABC123");
-        car.setMileage(50000);
-        car.setEngineType("Gasoline");
-
+        User user = userRepository.findById(1L).orElse(null);
+        Car car = createCar(user);
         carRepository.save(car);
 
-    assertNotNull(car.getId());
-    assertEquals(user, car.getOwner());
+        assertNotNull(car.getId());
+        assertEquals(user, car.getOwner());
 }
     @Test
     void saveCarWithIncompleteData() {
         User user = userRepository.findById(1L).orElse(null);
-        Car car = new Car();
-        car.setOwner(user);
-        car.setBrand("Toyota");
+        Car car = createCar(user);
+        car.setBrand("");
 
         assertThrows(ConstraintViolationException.class, () -> carRepository.save(car));
 
@@ -91,15 +92,7 @@ class CarRepositoryTest {
     @Test
     void findCarById() {
         User user = userRepository.findById(1L).orElse(null);
-        Car car = new Car();
-        car.setOwner(user);
-        car.setBrand("Toyota");
-        car.setModel("Camry");
-        car.setYearOfCreating(LocalDate.of(2020, 1, 1));
-        car.setLicensePlate("ABC123");
-        car.setMileage(10000);
-        car.setVin("123456789");
-        car.setEngineType("Gasoline");
+        Car car = createCar(user);
         carRepository.save(car);
 
         Optional<Car> optionalCar = carRepository.findById(car.getId());
@@ -110,8 +103,8 @@ class CarRepositoryTest {
     @Test
     void findAllCars() {
         User user = userRepository.findById(1L).orElse(null);
-        Car car1 = new Car(1L, user, "Toyota", "Camry", LocalDate.of(2020, 1, 1), "ABC123", 10000, "123456789", "Gasoline");
-        Car car2 = new Car(2L, user, "Honda", "Accord", LocalDate.of(2019, 1, 1), "DEF456", 20000, "987654321", "Gasoline");
+        Car car1 = createCar(user);
+        Car car2 = createCar(user);
         carRepository.saveAll(List.of(car1, car2));
         List<Car> allCars = carRepository.findAll();
         assertFalse(allCars.isEmpty());
@@ -122,7 +115,7 @@ class CarRepositoryTest {
     @Test
     void deleteCar() {
         User user = userRepository.findById(1L).orElse(null);
-        Car car = new Car(1L, user, "Toyota", "Camry", LocalDate.of(2020, 1, 1), "ABC123", 10000, "123456789", "Gasoline");
+        Car car = createCar(user);
         carRepository.save(car);
 
         assertTrue(carRepository.existsById(car.getId()));
@@ -133,7 +126,7 @@ class CarRepositoryTest {
     @Test
     void updateCar() {
         User user = userRepository.findById(1L).orElse(null);
-        Car car = new Car(1L, user, "Toyota", "Camry", LocalDate.of(2020, 1, 1), "ABC123", 10000, "123456789", "Gasoline");
+        Car car = createCar(user);
         carRepository.save(car);
 
         car.setBrand("Honda");
@@ -156,5 +149,31 @@ class CarRepositoryTest {
         assertEquals(20000, updatedCar.getMileage());
         assertEquals("987654321", updatedCar.getVin());
         assertEquals("Diesel", updatedCar.getEngineType());
+    }
+    @Test
+    void testFindAllByOwnerId() {
+        User user = userRepository.findById(1L).orElse(null);
+        Car car1 = createCar(user);
+        Car car2 = createCar(user);
+        carRepository.saveAll(List.of(car1, car2));
+        assert user != null;
+        List<Car> cars = carRepository.findAllByOwnerId(user.getId());
+        assertEquals(2, cars.size());
+        for (Car car : cars) {
+            assertEquals(user.getId(), car.getOwner().getId());
+        }
+    }
+    @Test
+    void testFindByOwnerIdAndId() {
+        User user = userRepository.findById(1L).orElse(null);
+        Car car = createCar(user);
+        carRepository.save(car);
+
+        assert user != null;
+        Car foundCar = carRepository.findByOwnerIdAndId(user.getId(), car.getId());
+        assertNotNull(foundCar);
+        assertEquals(car.getId(), foundCar.getId());
+        assertEquals(user.getId(), foundCar.getOwner().getId());
+
     }
 }

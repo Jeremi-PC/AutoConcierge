@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -35,36 +36,57 @@ public class CarService {
         }
     }
 
-    public List<Car> getAllCars() {
-        return carRepository.findAll();
-    }
     public Car getCarById(Long carId) {
-        return carRepository.findById(carId).orElse(null);
+        Optional<Car> optionalCar = carRepository.findById(carId);
+        if (optionalCar.isPresent()) {
+            return optionalCar.get();
+        } else {
+            throw new IllegalArgumentException("Автомобиль с идентификатором " + carId + " не найден");
+        }
     }
 
     public Car getCarByUserIdAndCarId(Long userId, Long carId) {
-        return carRepository.findByOwnerIdAndId(userId, carId);
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            throw new IllegalArgumentException("Пользователь с идентификатором " + userId + " не найден");
+        }
+        Car car = carRepository.findByOwnerIdAndId(userId, carId);
+        if (car == null) {
+            throw new IllegalArgumentException("Автомобиль с идентификатором " + carId + " не найден для пользователя с идентификатором " + userId);
+        }
+        return car;
     }
 
     public List<Car> getCarByUserId(Long userId) {
-        return carRepository.findAllByOwnerId(userId);
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            throw new IllegalArgumentException("Пользователь с идентификатором " + userId + " не найден");
+        }
+        List<Car> cars = carRepository.findAllByOwnerId(userId);
+        if (cars.isEmpty()) {
+            throw new IllegalArgumentException("Пользователь с идентификатором " + userId + " не имеет ни одного автомобиля");
+        }
+        return cars;
+
     }
 
     public Car updateCar(Long userId, Long carId, Car carDetails) {
         User user = userRepository.findById(userId).orElse(null);
-        Car car = carRepository.findByOwnerIdAndId(userId, carId);
-        if (car != null || user != null) {
-            car.setOwner(user);
-            car.setBrand(carDetails.getBrand());
-            car.setModel(carDetails.getModel());
-            car.setVin(carDetails.getVin());
-            car.setMileage(carDetails.getMileage());
-            car.setYearOfCreating(carDetails.getYearOfCreating());
-            car.setEngineType(carDetails.getEngineType());
-            return carRepository.save(car);
-        } else {
-            throw new RuntimeException("Не возможно найти машину");
+        if (user == null) {
+            throw new IllegalArgumentException("Пользователь с идентификатором " + userId + " не найден");
         }
+        Car car = carRepository.findByOwnerIdAndId(userId, carId);
+        if (car == null) {
+            throw new IllegalArgumentException("Автомобиль с идентификатором " + carId + " не найден для пользователя с идентификатором " + userId);
+        }
+        car.setBrand(carDetails.getBrand());
+        car.setModel(carDetails.getModel());
+        car.setVin(carDetails.getVin());
+        car.setMileage(carDetails.getMileage());
+        car.setYearOfCreating(carDetails.getYearOfCreating());
+        car.setEngineType(carDetails.getEngineType());
+
+        return carRepository.save(car);
     }
 
 
