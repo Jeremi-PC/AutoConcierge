@@ -38,7 +38,6 @@ public class Car {
     @NotBlank(message = "Model name must not be blank")
     private String model;
     @Past
-    @NotNull
     private LocalDate yearOfCreating;
     @NotBlank(message = "License plate name must not be blank")
     private String licensePlate;

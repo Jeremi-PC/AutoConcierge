@@ -4,6 +4,9 @@ import com.example.auto_concierge.dto.serviceCenter.ServiceCenterDTO;
 import com.example.auto_concierge.entity.user.Role;
 import com.example.auto_concierge.entity.serviceCenter.ServiceCenter;
 import com.example.auto_concierge.entity.user.User;
+import com.example.auto_concierge.exception.DuplicateItemException;
+import com.example.auto_concierge.exception.InsufficientPermissionException;
+import com.example.auto_concierge.exception.NotFoundException;
 import com.example.auto_concierge.mapper.ServiceCenterMapper;
 import com.example.auto_concierge.repository.ServiceCenterRepository;
 import com.example.auto_concierge.repository.UserRepository;
@@ -12,8 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -34,59 +39,61 @@ public class ServiceCenterService {
     }
 
     public ServiceCenter createServiceCenter(Long userId, ServiceCenter serviceCenter) {
-        User user = userRepository.findById(userId).orElse(null);
-        if (user == null) {
-            throw new RuntimeException("Пользователь с идентификатором " + userId + " не найден");
-        }
-        if (user.getRole() == Role.SERVICE_CENTER) {
-            if (serviceCenterRepository.existsByAddress(serviceCenter.getAddress())) {
-                throw new RuntimeException("СТО с таким адресом уже существует");
-            }
-            serviceCenter.setOwner(user);
-            return serviceCenterRepository.save(serviceCenter);
-        } else {
-            throw new RuntimeException("Недостаточно прав для создания сервис центра");
+        return userRepository.findById(userId)
+                .map(user -> {
+                    if (user.getRole() != Role.SERVICE_CENTER) {
+                        throw new InsufficientPermissionException("Недостаточно прав для создания сервис центра");
+                    }
+                    if (serviceCenterRepository.existsByAddress(serviceCenter.getAddress())) {
+                        throw new DuplicateItemException("СТО с таким адресом уже существует");
+                    }
+                    serviceCenter.setOwner(user);
+                    return serviceCenterRepository.save(serviceCenter);
+                })
+                .orElseThrow(() -> new NotFoundException("Пользователь с идентификатором " + userId + " не найден"));
+    }
+
+
+    public List<ServiceCenterDTO> getAllServiceCenters() {
+        List<ServiceCenter> serviceCenters = serviceCenterRepository.findAll();
+        if (!serviceCenters.isEmpty()) {
+            return serviceCenters.stream()
+                    .map(serviceCenterMapper.INSTANCE::serviceCenterToServiceCenterDto)
+                    .collect(Collectors.toList());
+        }else {
+            throw new NotFoundException("Сервисные центры не найдены");
         }
     }
 
-    public List<ServiceCenter> getAllServiceCenters() {
-        List<ServiceCenter> serviceCenters = serviceCenterRepository.findAll();
-        if (serviceCenters.isEmpty()) {
-            throw new RuntimeException("Сервисные центры не найдены");
-        }
-        return serviceCenters;
-    }
 
     public ServiceCenterDTO getServiceCenterDTOById(Long id) {
-        ServiceCenter serviceCenter = serviceCenterRepository.findById(id).orElse(null);
-        if (serviceCenter != null) {
-            return serviceCenterMapper.serviceCenterToServiceCenterDto(serviceCenter);
-        } else {
-            return null;
-        }
+        return serviceCenterRepository.findById(id)
+                .map(serviceCenterMapper::serviceCenterToServiceCenterDto)
+                .orElseThrow(() -> new NotFoundException("Сервисный центр с идентификатором " + id + " не найден"));
     }
     public ServiceCenter getServiceCenterById(Long id) {
-        return serviceCenterRepository.findById(id).orElse(null);
+        return serviceCenterRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Сервисный центр с идентификатором " + id + " не найден"));
     }
 
     public ServiceCenter updateServiceCenter(Long id, ServiceCenter serviceCenterDetails) {
-        ServiceCenter serviceCenter = serviceCenterRepository.findById(id).orElse(null);
-        if (serviceCenter == null) {
-            throw new IllegalArgumentException("Сервисный центр с идентификатором " + id + " не найден");
-        }
-            serviceCenter.setName(serviceCenterDetails.getName());
-            serviceCenter.setAddress(serviceCenterDetails.getAddress());
-            serviceCenter.setContactNumber(serviceCenterDetails.getContactNumber());
-            serviceCenter.setWebsite(serviceCenterDetails.getWebsite());
-            serviceCenter.setAverageRating(serviceCenterDetails.getAverageRating());
-            serviceCenter.setSchedule(serviceCenterDetails.getSchedule());
-            return serviceCenterRepository.save(serviceCenter);
+        return serviceCenterRepository.findById(id)
+                .map(serviceCenter -> {
+                    serviceCenter.setName(serviceCenterDetails.getName());
+                    serviceCenter.setAddress(serviceCenterDetails.getAddress());
+                    serviceCenter.setContactNumber(serviceCenterDetails.getContactNumber());
+                    serviceCenter.setWebsite(serviceCenterDetails.getWebsite());
+                    serviceCenter.setAverageRating(serviceCenterDetails.getAverageRating());
+                    serviceCenter.setSchedule(serviceCenterDetails.getSchedule());
+                    return serviceCenterRepository.save(serviceCenter);
+                })
+                .orElseThrow(() -> new IllegalArgumentException("Сервисный центр с идентификатором " + id + " не найден"));
     }
 
+
     public void deleteServiceCenter(Long id) {
-        if (!serviceCenterRepository.existsById(id)) {
-            throw new IllegalArgumentException("Сервисный центр с идентификатором " + id + " не найден");
-        }
+        serviceCenterRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Сервисный центр с идентификатором " + id + " не найден"));
         try {
             serviceCenterRepository.deleteById(id);
         } catch (Exception e) {
@@ -95,14 +102,16 @@ public class ServiceCenterService {
     }
 
     public List<ServiceCenter> findServiceCentersWithinRadius(double latitude, double longitude, double radius) {
-        List<ServiceCenter> serviceCenters = serviceCenterRepository.findAll();
-        List<ServiceCenter> serviceCentersWithinRadius = new ArrayList<>();
         double radiusInKm = radius * unknownKoefficient;
-        for (ServiceCenter serviceCenter : serviceCenters) {
-            double distance = getDistance(latitude, longitude, serviceCenter);
-            if (distance <= radiusInKm) {
-                serviceCentersWithinRadius.add(serviceCenter);
-            }
+
+        List<ServiceCenter> serviceCentersWithinRadius = serviceCenterRepository.findAll().stream()
+                .filter(serviceCenter -> {
+                    double distance = getDistance(latitude, longitude, serviceCenter);
+                    return distance <= radiusInKm;
+                })
+                .collect(Collectors.toList());
+        if (serviceCentersWithinRadius.isEmpty()) {
+            throw new NotFoundException("Сервисные центры не найдены в указанном радиусе");
         }
         return serviceCentersWithinRadius;
     }

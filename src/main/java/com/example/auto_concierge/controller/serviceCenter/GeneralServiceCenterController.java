@@ -20,7 +20,7 @@ public class GeneralServiceCenterController {
         this.serviceCenterService = serviceCenterService;
     }
     @GetMapping()
-    public List<ServiceCenter> getAllServiceCenters(){
+    public List<ServiceCenterDTO> getAllServiceCenters(){
         return serviceCenterService.getAllServiceCenters();
     }
     @GetMapping("/{serviceCenterId}")

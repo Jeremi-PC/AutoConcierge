@@ -63,15 +63,12 @@ public class UserService {
     }
 
     public void deleteUser(Long userId) {
-        User user = userRepository.findById(userId).orElse(null);
-        if (user == null) {
-            throw new IllegalArgumentException("Пользователь с идентификатором " + userId + " не найден");
-        }
-        try {
-            userRepository.deleteById(userId);
-        } catch (Exception e) {
-            throw new RuntimeException("Ошибка при удалении пользователя с идентификатором " + userId + ": " + e.getMessage(), e);
-        }
+        userRepository.findById(userId).ifPresentOrElse(
+                user -> userRepository.deleteById(userId),
+                () -> {
+                    throw new IllegalArgumentException("Пользователь с идентификатором " + userId + " не найден");
+                }
+        );
     }
 }
 
