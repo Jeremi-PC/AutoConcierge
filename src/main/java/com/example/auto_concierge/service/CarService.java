@@ -13,7 +13,6 @@ import com.example.auto_concierge.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,7 +72,7 @@ public class CarService {
                 .orElseThrow(() -> new NotFoundException("Машина с идентификатором " + carId + " не найдена"));
     }
 
-    public List<CarDTO> getCarByUserId(Long userId) {
+    public List<CarDTO> getCarsByUserId(Long userId) {
         return userRepository.findById(userId)
                 .map(user -> {
                     List<Car> cars = carRepository.findAllByOwnerId(userId);

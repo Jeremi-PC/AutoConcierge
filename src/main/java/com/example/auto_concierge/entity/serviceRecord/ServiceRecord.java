@@ -1,10 +1,10 @@
 package com.example.auto_concierge.entity.serviceRecord;
 
 import com.example.auto_concierge.entity.car.Car;
+import com.example.auto_concierge.entity.partsOrder.Status;
 import com.example.auto_concierge.entity.serviceCenter.ServiceCenter;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -23,7 +23,7 @@ public class ServiceRecord {
     private Long id;
     @NotNull
     @ManyToOne (fetch = FetchType.LAZY)
-    @JoinColumn(name = "car_id")
+    @JoinColumn(name = "car_id" )
     private Car car;
     @NotNull
     @ManyToOne (fetch = FetchType.LAZY)

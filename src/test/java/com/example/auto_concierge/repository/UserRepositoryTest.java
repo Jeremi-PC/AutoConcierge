@@ -71,8 +71,8 @@ class UserRepositoryTest {
     }
     @Test
     void findAllUsers() {
-        User user1 = new User(1L, "John", "Doe", "johnbrown", "password123", "john.doe@example.com", List.of(new Phone("+1", "564", "456789")), Role.CLIENT, null, null);
-        User user2 = new User(2L, "Jane", "Smith", "janesmith", "password456", "jane.smith@example.com", List.of(new Phone("+1", "123", "987654")), Role.SERVICE_CENTER, null, null);
+        User user1 = new User(1L, "John", "Doe", "johnbrown", "password123", "john.doe@example.com", List.of(new Phone("+1", "564", "456789")), Role.CLIENT, null, null,null);
+        User user2 = new User(2L, "Jane", "Smith", "janesmith", "password456", "jane.smith@example.com", List.of(new Phone("+1", "123", "987654")), Role.SERVICE_CENTER, null, null,null);
 
         userRepository.saveAll(List.of(user1, user2));
 

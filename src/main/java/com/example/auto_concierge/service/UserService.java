@@ -1,5 +1,7 @@
 package com.example.auto_concierge.service;
 
+import com.example.auto_concierge.entity.car.Car;
+import com.example.auto_concierge.repository.CarRepository;
 import com.example.auto_concierge.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -11,9 +13,11 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final CarRepository carRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, CarRepository carRepository) {
         this.userRepository = userRepository;
+        this.carRepository = carRepository;
     }
 
     public User createUser(User user) {
@@ -63,6 +67,9 @@ public class UserService {
     }
 
     public void deleteUser(Long userId) {
+        List<Car> userCars = carRepository.findAllByOwnerId(userId);
+        userCars.forEach(car -> car.setOwner(null));
+        carRepository.saveAll(userCars);
         userRepository.findById(userId).ifPresentOrElse(
                 user -> userRepository.deleteById(userId),
                 () -> {

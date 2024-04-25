@@ -22,5 +22,4 @@ public class Address {
     private Double latitude;
     @NotNull
     private Double longitude;
-
 }

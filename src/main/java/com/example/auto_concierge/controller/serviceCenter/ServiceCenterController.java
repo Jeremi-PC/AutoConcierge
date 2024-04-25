@@ -2,6 +2,7 @@ package com.example.auto_concierge.controller.serviceCenter;
 
 import com.example.auto_concierge.entity.serviceCenter.ServiceCenter;
 import com.example.auto_concierge.service.ServiceCenterService;
+import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
@@ -20,20 +21,19 @@ public class ServiceCenterController {
         this.serviceCenterService = serviceCenterService;
     }
 
+    @RolesAllowed(value = {"SERVICE_CENTER","ADMIN"})
     @PostMapping("/create")
     public ServiceCenter createServiceCenter(@PathVariable Long userId, @RequestBody ServiceCenter serviceCenter) {
         return serviceCenterService.createServiceCenter(userId, serviceCenter);
     }
 
+    @RolesAllowed(value = {"SERVICE_CENTER","ADMIN"})
     @PutMapping("/{serviceCenterId}")
     public ServiceCenter updateServiceCenter(@PathVariable Long serviceCenterId, @RequestBody ServiceCenter serviceCenterDetails) {
         return serviceCenterService.updateServiceCenter(serviceCenterId, serviceCenterDetails);
     }
 
-    @DeleteMapping("/{serviceCenterId}")
-    public void deleteServiceCenter(@PathVariable Long serviceCenterId) {
-        serviceCenterService.deleteServiceCenter(serviceCenterId);
-    }
+    @RolesAllowed(value = {"CLIENT","PART_SUPPLIER","ADMIN"})
     @GetMapping("/within-radius")
     public ResponseEntity<List<ServiceCenter>> findServiceCentersWithinRadius(
             @RequestParam("latitude") double latitude,

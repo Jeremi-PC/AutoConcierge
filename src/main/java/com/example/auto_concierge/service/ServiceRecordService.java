@@ -5,11 +5,9 @@ import com.example.auto_concierge.dto.serviceRecord.ServiceRecordDTO;
 import com.example.auto_concierge.entity.car.Car;
 import com.example.auto_concierge.entity.serviceCenter.ServiceCenter;
 import com.example.auto_concierge.entity.serviceRecord.ServiceRecord;
-import com.example.auto_concierge.entity.serviceRecord.Status;
+import com.example.auto_concierge.entity.partsOrder.Status;
 
 import com.example.auto_concierge.exception.NotFoundException;
-import com.example.auto_concierge.mapper.CarMapper;
-import com.example.auto_concierge.mapper.ServiceCenterMapper;
 import com.example.auto_concierge.mapper.ServiceRecordMapper;
 import com.example.auto_concierge.repository.ServiceRecordRepository;
 import jakarta.transaction.Transactional;

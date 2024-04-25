@@ -2,7 +2,7 @@ package com.example.auto_concierge.dto.serviceRecord;
 
 import com.example.auto_concierge.entity.serviceRecord.Service;
 import com.example.auto_concierge.entity.serviceRecord.ServiceType;
-import com.example.auto_concierge.entity.serviceRecord.Status;
+import com.example.auto_concierge.entity.partsOrder.Status;
 
 import java.time.ZonedDateTime;
 import java.util.List;
