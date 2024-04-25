@@ -3,7 +3,6 @@ package com.example.auto_concierge.service;
 import com.example.auto_concierge.dto.serviceCenter.ServiceCenterDTO;
 import com.example.auto_concierge.entity.user.Role;
 import com.example.auto_concierge.entity.serviceCenter.ServiceCenter;
-import com.example.auto_concierge.entity.user.User;
 import com.example.auto_concierge.exception.DuplicateItemException;
 import com.example.auto_concierge.exception.InsufficientPermissionException;
 import com.example.auto_concierge.exception.NotFoundException;
@@ -14,10 +13,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -71,6 +67,21 @@ public class ServiceCenterService {
                 .map(serviceCenterMapper::serviceCenterToServiceCenterDto)
                 .orElseThrow(() -> new NotFoundException("Сервисный центр с идентификатором " + id + " не найден"));
     }
+    public List<ServiceCenterDTO> getServiceCentersDTOByUserId(Long userId) {
+        return userRepository.findById(userId)
+                .map(user -> {
+                    List<ServiceCenter> serviceCenters = serviceCenterRepository.findAllByOwnerId(userId);
+                    if (!serviceCenters.isEmpty()) {
+                        return serviceCenters.stream()
+                                .map(ServiceCenterMapper.INSTANCE::serviceCenterToServiceCenterDto)
+                                .collect(Collectors.toList());
+                    } else {
+                        throw new NotFoundException("Сервисные центры для пользователя с идентификатором " + userId + " не найдены");
+                    }
+                })
+                .orElseThrow(() -> new NotFoundException("Пользователь с идентификатором " + userId + " не найден"));
+    }
+
     public ServiceCenter getServiceCenterById(Long id) {
         return serviceCenterRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Сервисный центр с идентификатором " + id + " не найден"));

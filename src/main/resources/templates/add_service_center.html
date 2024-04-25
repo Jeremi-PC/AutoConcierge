@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Service Center</title>
+</head>
+<body>
+<h2>Add Service Center</h2>
+<form action="/service_center/add_service_center" method="post">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required>
+    <br>
+    <-- Добавление объектра типа Address ->
+    <label for="serviceCenter.address.street">Street:</label>
+    <input type="text" id="serviceCenter.address.street" name="serviceCenter.address.street" required>
+    <br>
+    <label for="serviceCenter.address.city">City:</label>
+    <input type="text" id="serviceCenter.address.city" name="serviceCenter.address.city" required>
+    <br>
+    <label for="serviceCenter.address.state">State:</label>
+    <input type="text" id="serviceCenter.address.state" name="serviceCenter.address.state" required>
+    <br>
+    <label for="serviceCenter.address.postalCode">Postal Code:</label>
+    <input type="text" id="serviceCenter.address.postalCode" name="serviceCenter.address.postalCode" required>
+    <br>
+    <label for="serviceCenter.address.latitude">Latitude:</label>
+    <input type="number" id="serviceCenter.address.latitude" name="serviceCenter.address.latitude" required step="0.000001">
+    <br>
+    <label for="serviceCenter.address.longitude">Longitude:</label>
+    <input type="number" id="serviceCenter.address.longitude" name="serviceCenter.address.longitude" required step="0.000001">
+    <br>
+    <-- Добавление объектра типа Phone ->
+    <label for="serviceCenter.phone.countryCode">Country Code:</label>
+    <input type="text" id="serviceCenter.phone.countryCode" name="serviceCenter.phone.countryCode" required>
+    <label for="serviceCenter.phone.areaCode">Area Code:</label>
+    <input type="text" id="serviceCenter.phone.areaCode" name="serviceCenter.phone.areaCode" required>
+    <label for="serviceCenter.phone.number">Number:</label>
+    <input type="text" id="serviceCenter.phone.number" name="serviceCenter.phone.number" required>
+    <br>
+    <-- ******************************** ->
+    <label for="website">Website:</label>
+    <input type="url" id="website" name="website">
+    <br>
+    <label for="averageRating">Average Rating:</label>
+    <input type="number" id="averageRating" name="averageRating" step="0.1">
+    <br>
+
+    <button type="submit">Добавить СТО</button>
+</form>
+
+<a href="/user/profile">Back to Profile</a>
+</body>
+</html>

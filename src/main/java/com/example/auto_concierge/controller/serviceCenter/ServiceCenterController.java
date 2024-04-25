@@ -1,45 +1,43 @@
 package com.example.auto_concierge.controller.serviceCenter;
 
-import com.example.auto_concierge.entity.serviceCenter.ServiceCenter;
+import com.example.auto_concierge.controller.UserHolder;
 import com.example.auto_concierge.service.ServiceCenterService;
+import jakarta.annotation.security.RolesAllowed;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import com.example.auto_concierge.entity.serviceCenter.ServiceCenter;
+import com.example.auto_concierge.entity.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.http.ResponseEntity;
 
-
-import java.util.List;
-
-@RestController
-@RequestMapping("/api/users/{userId}/service-centers")
+@Controller
+@RequestMapping("/service_center")
 public class ServiceCenterController {
 
     private final ServiceCenterService serviceCenterService;
+    private final UserHolder userHolder;
 
     @Autowired
-    public ServiceCenterController(ServiceCenterService serviceCenterService) {
+    public ServiceCenterController(ServiceCenterService serviceCenterService, UserHolder userHolder) {
         this.serviceCenterService = serviceCenterService;
+        this.userHolder = userHolder;
     }
 
-    @PostMapping("/create")
-    public ServiceCenter createServiceCenter(@PathVariable Long userId, @RequestBody ServiceCenter serviceCenter) {
-        return serviceCenterService.createServiceCenter(userId, serviceCenter);
+    @RolesAllowed({"ADMIN", "CLIENT", "SERVICE_CENTER"})
+    @GetMapping("/add_service_center")
+    public String getAddServiceCenterPage(Model model) {
+        model.addAttribute("serviceCenter", new ServiceCenter());
+        return "add_service_center";
     }
 
-    @PutMapping("/{serviceCenterId}")
-    public ServiceCenter updateServiceCenter(@PathVariable Long serviceCenterId, @RequestBody ServiceCenter serviceCenterDetails) {
-        return serviceCenterService.updateServiceCenter(serviceCenterId, serviceCenterDetails);
-    }
-
-    @DeleteMapping("/{serviceCenterId}")
-    public void deleteServiceCenter(@PathVariable Long serviceCenterId) {
-        serviceCenterService.deleteServiceCenter(serviceCenterId);
-    }
-    @GetMapping("/within-radius")
-    public ResponseEntity<List<ServiceCenter>> findServiceCentersWithinRadius(
-            @RequestParam("latitude") double latitude,
-            @RequestParam("longitude") double longitude,
-            @RequestParam("radius") double radius) {
-        List<ServiceCenter> serviceCenters = serviceCenterService.findServiceCentersWithinRadius(latitude, longitude, radius);
-        return ResponseEntity.ok(serviceCenters);
+    @RolesAllowed({"ADMIN", "CLIENT", "SERVICE_CENTER"})
+    @PostMapping("/add_service_center")
+    public String addServiceCenter(@ModelAttribute("serviceCenter") ServiceCenter serviceCenter) {
+        User owner = userHolder.getUserFromPrincipal();
+        serviceCenterService.createServiceCenter(owner.getId(), serviceCenter);
+        return "redirect:/user/profile";
     }
 }

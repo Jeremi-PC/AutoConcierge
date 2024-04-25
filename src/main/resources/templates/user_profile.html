@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User profile</title>
+</head>
+<body>
+<h2>Account</h2>
+<p><b>ID:</b> <span th:text="${user.id}"></span></p>
+<p><b>Email:</b> <span th:text="${user.email}"></span></p>
+<p><b>Username:</b> <span th:text="${user.username}"></span></p>
+<h2>Personal</h2>
+<p><b>First Name:</b> <span th:text="${user.firstName}"></span></p>
+<p><b>Last Name:</b> <span th:text="${user.lastName}"></span></p>
+<p><b>Role:</b> <span th:text="${user.role}"></span></p>
+<h2>Phone Numbers</h2>
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th>Country Code</th>
+            <th>Area Code</th>
+            <th>Phone Number</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="phone : ${user.phone}">
+            <td th:text="${phone.countryCode}"></td>
+            <td th:text="${phone.areaCode}"></td>
+            <td th:text="${phone.phoneNumber}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:if="${#lists.isEmpty(user.phone)}">
+    <p>No phone numbers found.</p>
+</div>
+
+<h2>Cars</h2>
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Brand</th>
+            <th>Model</th>
+            <th>Year</th>
+            <th>License Plate</th>
+            <th>Mileage</th>
+            <th>VIN</th>
+            <th>Engine Type</th>
+            <th>Phone Number</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="car : ${cars}">
+            <td th:text="${car.id}"></td>
+            <td th:text="${car.brand}"></td>
+            <td th:text="${car.model}"></td>
+            <td th:text="${car.yearOfCreating}"></td>
+            <td th:text="${car.licensePlate}"></td>
+            <td th:text="${car.mileage}"></td>
+            <td th:text="${car.vin}"></td>
+            <td th:text="${car.engineType}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:if="${#lists.isEmpty(cars)}">
+    <p>No cars found.</p>
+</div>
+<!--<div th:if="${not #lists.isEmpty(serviceCenters)}">-->
+<!--    <h2>Service Centers</h2>-->
+<!--    <div>-->
+<!--        <table>-->
+<!--            <thead>-->
+<!--            <tr>-->
+<!--                <th>ID</th>-->
+<!--                <th>Name</th>-->
+<!--                <th>Address</th>-->
+<!--                <th>Contact Numbers</th>-->
+<!--                <th>Website</th>-->
+<!--                <th>Average Rating</th>-->
+<!--            </tr>-->
+<!--            </thead>-->
+<!--            <tbody>-->
+<!--            <tr th:each="serviceCenter : ${serviceCenters}">-->
+<!--                <td th:text="${serviceCenter.id}"></td>-->
+<!--                <td th:text="${serviceCenter.name}"></td>-->
+<!--                <td>-->
+<!--                    <span th:text="${serviceCenter.address.street}"></span>,-->
+<!--                    <span th:text="${serviceCenter.address.city}"></span>,-->
+<!--                    <span th:text="${serviceCenter.address.state}"></span>,-->
+<!--                    <span th:text="${serviceCenter.address.postalCode}"></span>-->
+<!--                </td>-->
+<!--                <td>-->
+<!--                    <ul>-->
+<!--                        <li th:each="phone : ${serviceCenter.contactNumber}">-->
+<!--                            <span th:text="${phone.countryCode}"></span>-->
+<!--                            <span th:text="${phone.areaCode}"></span>-->
+<!--                            <span th:text="${phone.number}"></span>-->
+<!--                        </li>-->
+<!--                    </ul>-->
+<!--                </td>-->
+<!--                <td th:text="${serviceCenter.website}"></td>-->
+<!--                <td th:text="${serviceCenter.averageRating}"></td>-->
+<!--            </tr>-->
+<!--            </tbody>-->
+<!--        </table>-->
+<!--    </div>-->
+<!--</div>-->
+<!--<div th:else>-->
+<!--    <p>No service centers found.</p>-->
+<!--</div>-->
+<a href="/user/add_phone">Добавить контактный номер</a>
+<a href="/car/add_car">Добавить машину</a>
+<a href="/order/get_order">Просмотреть заказы</a>
+<a href="/service_center/add_service_center">Добавить СТО</a>
+<a href="/auth/logout">Выйти</a>
+</body>
+</html>

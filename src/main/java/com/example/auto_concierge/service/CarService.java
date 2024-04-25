@@ -13,7 +13,6 @@ import com.example.auto_concierge.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,7 +34,7 @@ public class CarService {
     public Car createCar(Long userId, CarDTO carDTO) {
         return userRepository.findById(userId)
                 .map(user -> {
-                    if (user.getRole() == Role.CLIENT) {
+                    if (user.getRole() != Role.PART_SUPPLIER ) {
                         Car car = carMapper.carDtoToCar(carDTO);
                         if (carRepository.existsByVin(car.getVin())) {
                             throw new DuplicateItemException("Машина с таким VIN уже существует");
@@ -73,7 +72,7 @@ public class CarService {
                 .orElseThrow(() -> new NotFoundException("Машина с идентификатором " + carId + " не найдена"));
     }
 
-    public List<CarDTO> getCarByUserId(Long userId) {
+    public List<CarDTO> getCarDTOByUserId(Long userId) {
         return userRepository.findById(userId)
                 .map(user -> {
                     List<Car> cars = carRepository.findAllByOwnerId(userId);
