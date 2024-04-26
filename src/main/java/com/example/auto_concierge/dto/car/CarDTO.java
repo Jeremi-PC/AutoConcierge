@@ -6,7 +6,7 @@ public record CarDTO(
         Long id,
         String brand,
         String model,
-        LocalDate year,
+        LocalDate yearOfCreating,
         String licensePlate,
         Integer mileage,
         String vin,

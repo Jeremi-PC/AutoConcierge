@@ -1,4 +1,4 @@
-package com.example.auto_concierge.entity.serviceRecord;
+package com.example.auto_concierge.entity.partsOrder;
 
 public enum Status {
     CREATED,

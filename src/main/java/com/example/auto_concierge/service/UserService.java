@@ -1,5 +1,7 @@
 package com.example.auto_concierge.service;
 
+import com.example.auto_concierge.entity.car.Car;
+import com.example.auto_concierge.repository.CarRepository;
 import com.example.auto_concierge.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -11,40 +13,69 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final CarRepository carRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, CarRepository carRepository) {
         this.userRepository = userRepository;
+        this.carRepository = carRepository;
     }
 
     public User createUser(User user) {
-        System.out.println("Received POST request to create user: " + user);
+        User existingUser = userRepository.findByEmail(user.getEmail());
+        if (existingUser != null) {
+            throw new RuntimeException("Пользователь с адресом электронной почты " + user.getEmail() + " уже существует");
+        }
+        try {
         return userRepository.save(user);
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при создании пользователя: " + e.getMessage(), e);
+        }
     }
 
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        try {
+            return userRepository.findAll();
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при получении списка всех пользователей: " + e.getMessage(), e);
+        }
     }
 
     public User getUserById(Long userId) {
-        return userRepository.findById(userId).orElse(null);
+        try {
+            return userRepository.findById(userId).orElse(null);
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при получении пользователя с идентификатором " + userId + ": " + e.getMessage(), e);
+        }
     }
 
     public User updateUser(Long userId, User userDetails) {
-        User user = userRepository.findById(userId).orElse(null);
-        if (user != null) {
-            user.setFirstName(userDetails.getFirstName());
-            user.setLastName(userDetails.getLastName());
-            user.setEmail(userDetails.getEmail());
-            user.setPassword(userDetails.getPassword());
-            user.setRole(userDetails.getRole());
-            return userRepository.save(user);
-        } else {
-            return null;
+        try {
+            User user = userRepository.findById(userId).orElse(null);
+            if (user != null) {
+                user.setFirstName(userDetails.getFirstName());
+                user.setLastName(userDetails.getLastName());
+                user.setEmail(userDetails.getEmail());
+                user.setPassword(userDetails.getPassword());
+                user.setRole(userDetails.getRole());
+                return userRepository.save(user);
+            } else {
+                throw new RuntimeException("Пользователь с идентификатором " + userId + " не найден");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при обновлении пользователя с идентификатором " + userId + ": " + e.getMessage(), e);
         }
     }
 
     public void deleteUser(Long userId) {
-        userRepository.deleteById(userId);
+        List<Car> userCars = carRepository.findAllByOwnerId(userId);
+        userCars.forEach(car -> car.setOwner(null));
+        carRepository.saveAll(userCars);
+        userRepository.findById(userId).ifPresentOrElse(
+                user -> userRepository.deleteById(userId),
+                () -> {
+                    throw new IllegalArgumentException("Пользователь с идентификатором " + userId + " не найден");
+                }
+        );
     }
 }
 
