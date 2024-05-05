@@ -1,32 +1,44 @@
 package com.example.auto_concierge.config;
+import com.example.auto_concierge.security.JwtAuthTokenFilter;
+import com.example.auto_concierge.security.UserDetailsServiceImpl;
+import com.example.auto_concierge.service.CustomOAuth2UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(jsr250Enabled = true)
 public class SecurityConfig {
+    private final UserDetailsServiceImpl userDetailsService;
 
-private final InMemoryUsersConfig inMemoryUsersConfig;
+    public SecurityConfig(UserDetailsServiceImpl userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
-    public SecurityConfig(InMemoryUsersConfig inMemoryUsersConfig) {
-        this.inMemoryUsersConfig = inMemoryUsersConfig;
+    @Bean
+    public OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService() {
+        return new CustomOAuth2UserService(); // Реализация пользовательского сервиса для обработки OAuth2 пользователей
+    }
+
+    @Bean
+    public JwtAuthTokenFilter authenticationJwtTokenFilter() {
+        return new JwtAuthTokenFilter(); // Фильтр для JWT аутентификации
     }
 
     @Bean
@@ -51,8 +63,8 @@ private final InMemoryUsersConfig inMemoryUsersConfig;
     }
     @Bean
     public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-        return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance(); // пока без шифрования пароля в БД
+      return new BCryptPasswordEncoder();
+//        return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance(); // пока без шифрования пароля в БД
     }
 
 }

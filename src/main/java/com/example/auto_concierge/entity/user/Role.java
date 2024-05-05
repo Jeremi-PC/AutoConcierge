@@ -4,5 +4,7 @@ public enum Role {
     CLIENT,
     SERVICE_CENTER,
     PART_SUPPLIER,
-    ADMIN
+    ADMIN,
+    BLOCKED,
+    DELETED
 }
